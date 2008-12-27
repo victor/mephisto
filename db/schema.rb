@@ -110,7 +110,7 @@ ActiveRecord::Schema.define(:version => 20081219130711) do
     t.integer  "assets_count",                  :default => 0
   end
 
-  add_index "contents", ["article_id", "approved", "type"], :name => "idx_comments"
+  add_index "contents", ["approved", "article_id", "type"], :name => "idx_comments"
   add_index "contents", ["published_at"], :name => "idx_articles_published"
 
   create_table "events", :force => true do |t|
@@ -125,14 +125,57 @@ ActiveRecord::Schema.define(:version => 20081219130711) do
     t.integer  "site_id"
   end
 
-  create_table "feedbacks", :force => true do |t|
-    t.integer  "site_id"
-    t.string   "name"
-    t.string   "email"
-    t.text     "body"
-    t.string   "key"
-    t.datetime "created_at"
+  create_table "globalize_countries", :force => true do |t|
+    t.string "code",                   :limit => 2
+    t.string "english_name"
+    t.string "date_format"
+    t.string "currency_format"
+    t.string "currency_code",          :limit => 3
+    t.string "thousands_sep",          :limit => 2
+    t.string "decimal_sep",            :limit => 2
+    t.string "currency_decimal_sep",   :limit => 2
+    t.string "number_grouping_scheme"
   end
+
+  add_index "globalize_countries", ["code"], :name => "index_globalize_countries_on_code"
+
+  create_table "globalize_languages", :force => true do |t|
+    t.string  "iso_639_1",             :limit => 2
+    t.string  "iso_639_2",             :limit => 3
+    t.string  "iso_639_3",             :limit => 3
+    t.string  "rfc_3066"
+    t.string  "english_name"
+    t.string  "english_name_locale"
+    t.string  "english_name_modifier"
+    t.string  "native_name"
+    t.string  "native_name_locale"
+    t.string  "native_name_modifier"
+    t.boolean "macro_language"
+    t.string  "direction"
+    t.string  "pluralization"
+    t.string  "scope",                 :limit => 1
+  end
+
+  add_index "globalize_languages", ["iso_639_1"], :name => "index_globalize_languages_on_iso_639_1"
+  add_index "globalize_languages", ["iso_639_2"], :name => "index_globalize_languages_on_iso_639_2"
+  add_index "globalize_languages", ["iso_639_3"], :name => "index_globalize_languages_on_iso_639_3"
+  add_index "globalize_languages", ["rfc_3066"], :name => "index_globalize_languages_on_rfc_3066"
+
+  create_table "globalize_translations", :force => true do |t|
+    t.string  "type"
+    t.string  "tr_key"
+    t.string  "table_name"
+    t.integer "item_id"
+    t.string  "facet"
+    t.boolean "built_in",            :default => true
+    t.integer "language_id"
+    t.integer "pluralization_index"
+    t.text    "text"
+    t.string  "namespace"
+  end
+
+  add_index "globalize_translations", ["item_id", "language_id", "table_name"], :name => "globalize_translations_table_name_and_item_and_language"
+  add_index "globalize_translations", ["language_id", "tr_key"], :name => "index_globalize_translations_on_tr_key_and_language_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "site_id"
@@ -145,6 +188,11 @@ ActiveRecord::Schema.define(:version => 20081219130711) do
     t.string "name"
     t.text   "options"
     t.string "type"
+  end
+
+  create_table "plugin_schema_info", :id => false, :force => true do |t|
+    t.string  "plugin_name"
+    t.integer "version"
   end
 
   create_table "sections", :force => true do |t|
@@ -168,6 +216,8 @@ ActiveRecord::Schema.define(:version => 20081219130711) do
     t.text    "ping_urls"
     t.integer "articles_per_page",                 :default => 15
     t.string  "host"
+    t.string  "akismet_key",        :limit => 100
+    t.string  "akismet_url"
     t.boolean "approve_comments"
     t.integer "comment_age"
     t.string  "timezone"
@@ -177,9 +227,10 @@ ActiveRecord::Schema.define(:version => 20081219130711) do
     t.string  "tag_path"
     t.string  "tag_layout"
     t.string  "current_theme_path"
-    t.string  "akismet_key",        :limit => 100
-    t.string  "akismet_url"
     t.string  "lang",                              :default => "en-US", :null => false
+    t.string  "mollom_public_key"
+    t.string  "mollom_private_key"
+    t.string  "antispam_system"
   end
 
   add_index "sites", ["host"], :name => "index_sites_on_host"
