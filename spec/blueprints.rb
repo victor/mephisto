@@ -12,7 +12,6 @@ Sham.tag   { Faker::Lorem.words(1) }
 Site.blueprint do
   title              { Sham.title }
   host               { Sham.host }
-  filter             { 'textile_filter' }
   approve_comments   { true }
   comment_age        { 30 }
   timezone           { TZInfo::Timezone.new("America/New_York") }
@@ -26,11 +25,10 @@ end
 User.blueprint do
   login            { Sham.login }
   email            { Sham.email }
-  filter           { 'textile_filter' }
   token            { 'quentintoken' }
   admin            { false }
-  salt             { '7e3041ebc2fc05a40c60028e2c4901a81035d3cd' }
-  crypted_password { '00742970dc9e6319f8019fd54864d3ea740f04b1' } # test
+  password         { 'password' }
+  password_confirmation { 'password' }
 end
 
 Membership.blueprint do

@@ -7,3 +7,4 @@ config.action_mailer.delivery_method = :test
 
 # Disable request forgery protection in test environment
 config.action_controller.allow_forgery_protection    = false
+

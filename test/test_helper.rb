@@ -3,6 +3,7 @@ ENV['TZ'] = 'US/Central'
 
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
+require 'webrat/rails'
 require 'ruby-debug'
 require 'machinist'
 require File.join(File.dirname(__FILE__), '..', 'spec', 'blueprints')
@@ -12,6 +13,10 @@ require File.join(File.dirname(__FILE__), 'referenced_caching_test_helper')
 
 Site.cache_sweeper_tracing = true
 ActiveRecord::Base.instantiate_observers
+
+Webrat.configure do |config|
+  config.mode = :rails
+end
 
 Time.class_eval do
   class << self
@@ -247,57 +252,6 @@ class Test::Unit::TestCase
     full_message = build_message(message, "<?> expected but was\n<?>.\n", 
       expected_models.collect(&to_test_param), actual_models.collect(&to_test_param))
     assert_block(full_message) { expected_models == actual_models }
-  end
-end
-
-class ActionController::IntegrationTest
-  include Mephisto::Caching::ReferencedCachingTestHelper
-  
-  # creates a session as a logged on user
-  def login_as(login)
-    visit do |sess|
-      sess.login_as login
-      yield sess if block_given?
-    end
-  end
-
-  # creates an anonymous session
-  def visit
-    open_session do |sess|
-      sess.host = 'test.host'
-      sess.extend Mephisto::Integration::Actor
-      yield sess if block_given?
-    end
-  end
-
-  def section_url_for(section, article = nil)
-    (article ? sections(section).to_page_url(contents(article)) : sections(section).to_url) * '/'
-  end
-
-  def feed_url_for(section)
-    "/feed/#{sections(section).to_feed_url * '/'}"
-  end
-end
-
-class ActionController::Integration::Session
-  def login_as(login)
-    post 'http://test.host/account/login', :login => login, :password => 'test'
-    assert request.session[:user]
-    assert redirect?
-  end
-
-  def get_with_basic(url, options = {})
-    get url, nil, 'authorization' => "Basic #{Base64.encode64("#{options[:login]}:test")}"
-  end
-
-  def assert_redirected_to(url)
-    assert redirect?
-    assert_equal url, interpret_uri(headers["location"].first)
-  end
-
-  def assert_redirected_to!(url)
-    assert_redirected_to(url)
-    follow_redirect!
   end
 end
 
