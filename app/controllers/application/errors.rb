@@ -14,9 +14,9 @@ class ApplicationController
 
     # Handle admin-application errors
     # TODO: after rails 2.0.2, convert these to rescue_from [array] rather than 3 lines.
-    rescue_from ActiveRecord::RecordNotFound,        :with => :render_admin_not_found
-    rescue_from ActionController::UnknownController, :with => :render_admin_not_found
-    rescue_from ActionController::UnknownAction,     :with => :render_admin_not_found
+    rescue_from ::ActiveRecord::RecordNotFound,        :with => :render_admin_not_found
+    rescue_from ::ActionController::UnknownController, :with => :render_admin_not_found
+    rescue_from ::ActionController::UnknownAction,     :with => :render_admin_not_found
 
     def render_admin_not_found
       # TODO: render this from the site's custom admin 404 file, if it's a multi-site install.
