@@ -1,0 +1,39 @@
+= MephistoXmlrpc
+
+
+== Configuration
+ install the plugin using script/pugin
+
+follow these steps
+
+1:  edit file app/controllers/application/error.rb
+
+locate these lines 
+
+ rescue_from ActiveRecord::RecordNotFound,        :with => :render_admin_not_found
+ rescue_from ActionController::UnknownController, :with => :render_admin_not_found
+ rescue_from ActionController::UnknownAction,     :with => :render_admin_not_found
+
+change these lines to
+
+rescue_from ::ActiveRecord::RecordNotFound,        :with => :render_admin_not_found
+rescue_from ::ActionController::UnknownController, :with => :render_admin_not_found
+rescue_from ::ActionController::UnknownAction,     :with => :render_admin_not_found
+
+save the file .
+
+2:  install action web services gem 
+
+gem install datanoise-actionwebservice -v=’2.2.2′
+
+paste this to your environment.rb
+
+config.gem ‘datanoise-actionwebservice’, :lib => ‘actionwebservice’, :version => ‘2.2.2′
+
+3.  restart your server 
+
+Now you have working xmlrpc service at your server . at  http://YOURSITE.com/xmlrpc
+
+==BUGS
+
+Please report all bugs and/or submit patches to: jeet at railshacks dot com
