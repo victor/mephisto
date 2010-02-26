@@ -14,7 +14,10 @@ class Admin::ArticlesController < Admin::BaseController
   before_filter :load_sections, :only => [:new, :edit]
 
   def index
-    @articles = site.articles.paginate(article_options(:order => 'contents.published_at DESC', :select => 'contents.*',
+    # Force NULL published_at values to be considered earlier than any non-NULL
+    # published_at value.  (Database servers differ on how NULLs are sorted, so
+    # we need to force a consistent order.)
+    @articles = site.articles.paginate(article_options(:order => "COALESCE(contents.published_at, '1900-01-01') DESC", :select => 'contents.*',
                                                        :page => params[:page], :per_page => params[:per_page]))
     
     @comments = @site.unapproved_comments.count :all, :group => :article, :order => '1 desc'
@@ -35,7 +38,7 @@ class Admin::ArticlesController < Admin::BaseController
   end
 
   def edit
-    @version   = params[:version] ? @article.versions.find(params[:version]) : @article or raise(ActiveRecord::RecordNotFound)
+    @version   = params[:version] ? @article.versions.find_by_version(params[:version]) : @article or raise(ActiveRecord::RecordNotFound)
     @published = @version.published?
     @version.published_at = utc_to_local(@version.published_at || Time.now.utc)
   end
