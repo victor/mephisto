@@ -8,7 +8,7 @@ authors:
 autorequire: redcloth
 bindir: bin
 cert_chain: 
-date: 2005-09-15 00:00:00 -04:00
+date: 2005-09-15 06:00:00 +02:00
 default_executable: redcloth
 dependencies: []
 
@@ -42,10 +42,13 @@ files:
 - tests/hard_breaks.yml
 has_rdoc: false
 homepage: http://www.whytheluckystiff.net/ruby/redcloth/
+licenses: 
 post_install_message: 
 rdoc_options: []
 
 require_paths: 
+- bin
+- bin
 - lib
 required_ruby_version: !ruby/object:Gem::Requirement 
   requirements: 
@@ -62,7 +65,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: redcloth
-rubygems_version: 1.3.1
+rubygems_version: 1.3.4
 signing_key: 
 specification_version: 1
 summary: RedCloth is a module for using Textile and Markdown in Ruby. Textile and Markdown are text formats.  A very simple text format. Another stab at making readable text that can be converted to HTML.
